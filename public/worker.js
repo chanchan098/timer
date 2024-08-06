@@ -3,26 +3,26 @@ self.onmessage = function (event) {
         var handle
         var dt = event.data.data
         console.log("data", dt)
-        var hoursStarted = dt.hoursStarted
-        var minutesStarted = dt.minutesStarted
-        var hoursEnded = dt.hoursEnded
-        var minutesEnded = dt.minutesEnded
-        var hoursNoonEnded = dt.hoursNoonEnded
-        var minutesNoonEnded = dt.minutesNoonEnded
+        var H_Started = dt.H_Started
+        var M_Started = dt.M_Started
+        var H_Ended = dt.H_Ended
+        var M_Ended = dt.M_Ended
+        var H_NoonEnded = dt.H_NoonEnded
+        var M_NoonEnded = dt.M_NoonEnded
 
         var overed = 0
-        if (minutesStarted != 0) {
-            overed = (minutesStarted * 60)
+        if (M_Started != 0) {
+            overed = (M_Started * 60)
         }
 
-        var allSeconds = ((hoursEnded - hoursStarted) * 60 * 60) - (overed) + (minutesEnded * 60)
-        var allSecondsOfNoon = ((hoursNoonEnded - hoursStarted) * 60 * 60) - (overed) + (minutesNoonEnded * 60)
+        var allSeconds = ((H_Ended - H_Started) * 60 * 60) - (overed) + (M_Ended * 60)
+        var allSecondsOfNoon = ((H_NoonEnded - H_Started) * 60 * 60) - (overed) + (M_NoonEnded * 60)
 
-        var hoursGone = new Date().getHours() - hoursStarted
+        var hoursGone = new Date().getHours() - H_Started
         var minutesGone = new Date().getMinutes()
 
         var secondsGone = (hoursGone * 60 * 60) -
-            (minutesStarted * 60) +
+            (M_Started * 60) +
             (minutesGone * 60) +
             new Date().getSeconds()
 
@@ -71,25 +71,25 @@ self.onmessage = function (event) {
 
 
 
-function test(hoursStarted, minutesStarted, hoursEnded, minutesEnded) {
-    var hoursStarted = hoursStarted
-    var minutesStarted = minutesStarted
-    var hoursEnded = hoursEnded
-    var minutesEnded = minutesEnded
+function test(H_Started, M_Started, H_Ended, M_Ended) {
+    var H_Started = H_Started
+    var M_Started = M_Started
+    var H_Ended = H_Ended
+    var M_Ended = M_Ended
 
     var overed = 0
-    if (minutesStarted != 0) {
-        overed = (minutesStarted * 60)
+    if (M_Started != 0) {
+        overed = (M_Started * 60)
     }
 
-    var allSeconds = ((hoursEnded - hoursStarted) * 60 * 60) - (overed) + (minutesEnded * 60)
+    var allSeconds = ((H_Ended - H_Started) * 60 * 60) - (overed) + (M_Ended * 60)
 
 
-    var hoursGone = new Date().getHours() - hoursStarted
+    var hoursGone = new Date().getHours() - H_Started
     var minutesGone = new Date().getMinutes()
 
     var secondsGone = (hoursGone * 60 * 60) -
-        (minutesStarted * 60) +
+        (M_Started * 60) +
         (minutesGone * 60) +
         new Date().getSeconds()
 

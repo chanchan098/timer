@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted, Ref } from 'vue'
+import { ref, onMounted, Ref, computed } from 'vue'
 
-var timeParams: Ref<{ [key: string]: Number }> = ref({
-    hoursStarted: 8,
-    minutesStarted: 50,
-    hoursNoonEnded: 12,
-    minutesNoonEnded: 20,
-    hoursPMRegistered: 13,
-    minutesPMRegistered: 45,
-    hoursEnded: 18,
-    minutesEnded: 20,
+var timeParams: Ref<{ [key: string]: number }> = ref({
+    H_Started: 8,
+    M_Started: 50,
+    H_NoonEnded: 12,
+    M_NoonEnded: 20,
+    H_PMStarted: 13,
+    M_PMStarted: 45,
+    H_Ended: 18,
+    M_Ended: 20,
 })
 
 var rests = ref({
@@ -35,8 +35,10 @@ var isLoading = ref(true)
 var isMobile = ref(false)
 // var show = ref("")
 var duration = ref(0)
-var durationNoon = ref(0)
+var validRestOfAM = ref(0)
 // var durationAfternoon = ref(0)
+
+const ALL = computed(() => {return parseFloat(validRestOfAM.value as unknown as string) + parseFloat(validRestOfPM.value as unknown as string) })
 
 
 function initData() {
@@ -54,37 +56,37 @@ function initData() {
         }
     }
 
-    var hoursStarted = timeParams.value.hoursStarted as unknown as number
-    var minutesStarted = timeParams.value.minutesStarted as unknown as number
-    var hoursNoonEnded = timeParams.value.hoursNoonEnded as unknown as number
-    var minutesNoonEnded = timeParams.value.minutesNoonEnded as unknown as number
+    var H_Started = timeParams.value.H_Started as unknown as number
+    var M_Started = timeParams.value.M_Started as unknown as number
+    var H_NoonEnded = timeParams.value.H_NoonEnded as unknown as number
+    var M_NoonEnded = timeParams.value.M_NoonEnded as unknown as number
 
 
-    var hoursPMRegistered = timeParams.value.hoursPMRegistered as unknown as number
-    var minutesPMRegistered = timeParams.value.minutesPMRegistered as unknown as number
-    var hoursEnded = timeParams.value.hoursEnded as unknown as number
-    var minutesEnded = timeParams.value.minutesEnded as unknown as number
+    var H_PMStarted = timeParams.value.H_PMStarted as unknown as number
+    var M_PMStarted = timeParams.value.M_PMStarted as unknown as number
+    var H_Ended = timeParams.value.H_Ended as unknown as number
+    var M_Ended = timeParams.value.M_Ended as unknown as number
 
 
     var overedSeconds: number = 0
-    if (minutesStarted != 0) {
-        overedSeconds = (minutesStarted * 60)
+    if (M_Started != 0) {
+        overedSeconds = (M_Started * 60)
     }
 
-    var allSeconds = ((hoursEnded - hoursStarted) * 60 * 60) - (overedSeconds) + (minutesEnded * 60)
-    var allSecondsOfNoon = ((hoursNoonEnded - hoursStarted) * 60 * 60) - (overedSeconds) + (minutesNoonEnded * 60)
+    var allSeconds = ((H_Ended - H_Started) * 60 * 60) - (overedSeconds) + (M_Ended * 60)
+    var allSecondsOfNoon = ((H_NoonEnded - H_Started) * 60 * 60) - (overedSeconds) + (M_NoonEnded * 60)
 
     duration.value = (allSeconds / 60 / 60).toFixed(2) as unknown as number
-    durationNoon.value = (allSecondsOfNoon / 60 / 60).toFixed(2) as unknown as number
+    validRestOfAM.value = (allSecondsOfNoon / 60 / 60).toFixed(2) as unknown as number
 
 
     var overedSecondsPM: number = 0
-    if (minutesPMRegistered != 0) {
-        overedSecondsPM = (minutesPMRegistered * 60)
+    if (M_PMStarted != 0) {
+        overedSecondsPM = (M_PMStarted * 60)
     }
 
-    var hoursPM = hoursEnded - hoursPMRegistered
-    var allSecondsPM = (hoursPM * 60 * 60) + (minutesEnded * 60) - (overedSecondsPM as unknown as number)
+    var hoursPM = H_Ended - H_PMStarted
+    var allSecondsPM = (hoursPM * 60 * 60) + (M_Ended * 60) - (overedSecondsPM as unknown as number)
 
     validRestOfPM.value = (allSecondsPM / 60 / 60).toFixed(2) as unknown as number
 }
@@ -132,19 +134,19 @@ function checkScreenWidthAndRedirect() {
 }
 
 function calculateSalary() {
-    var hoursStarted = timeParams.value.hoursStarted
-    var minutesStarted = timeParams.value.minutesStarted
-    var hoursEnded = timeParams.value.hoursEnded
-    var minutesEnded = timeParams.value.minutesEndedf
-    // var hoursNoonEnded = timeParams.value.hoursNoonEnded
-    // var minutesNoonEnded = timeParams.value.minutesNoonEnded
+    var H_Started = timeParams.value.H_Started
+    var M_Started = timeParams.value.M_Started
+    var H_Ended = timeParams.value.H_Ended
+    var M_Ended = timeParams.value.M_Endedf
+    // var H_NoonEnded = timeParams.value.H_NoonEnded
+    // var M_NoonEnded = timeParams.value.M_NoonEnded
 
-    var overedSeconds: Number = 0
-    if (minutesStarted != 0) {
-        overedSeconds = (minutesStarted * 60)
+    var overedSeconds: number = 0
+    if (M_Started != 0) {
+        overedSeconds = (M_Started * 60)
     }
 
-    var allSeconds = ((hoursEnded - hoursStarted) * 60 * 60) - (overedSeconds) + (minutesEnded * 60)
+    var allSeconds = ((H_Ended - H_Started) * 60 * 60) - (overedSeconds) + (M_Ended * 60)
     const sEveryDay = 200
     var perSecond = (sEveryDay / allSeconds).toFixed(2)
     var perMinutes = (sEveryDay / (allSeconds / 60)).toFixed(2)
@@ -198,8 +200,8 @@ onMounted(() => {
             <el-row>
                 <el-col :span="20" :offset="2">
                     <el-card>
-                        <template #header>Morning to noon <span class="text-12px">({{ durationNoon }}h)
-                                ({{ duration - durationNoon }}h)</span></template>
+                        <template #header>Morning to noon <span class="text-12px">({{ validRestOfAM }}h)
+                                ({{ duration - validRestOfAM }}h)</span></template>
 
                         <el-row v-for="(value, key) in restsOfNoon">
                             <el-col :span="12">
@@ -259,7 +261,7 @@ onMounted(() => {
                                 <div class="text-right">valid AM hours: </div>
                             </el-col>
                             <el-col :span="7">
-                                <div class="text-left ml-5px">{{ durationNoon }} h</div>
+                                <div class="text-left ml-5px">{{ validRestOfAM }} h</div>
                             </el-col>
                         </el-row>
 
@@ -269,6 +271,15 @@ onMounted(() => {
                             </el-col>
                             <el-col :span="7">
                                 <div class="text-left ml-5px">{{ validRestOfPM }} h</div>
+                            </el-col>
+                        </el-row>
+
+                        <el-row class="!mb-5px">
+                            <el-col :span="17">
+                                <div class="text-right">ALL: </div>
+                            </el-col>
+                            <el-col :span="7">
+                                <div class="text-left ml-5px">{{ ALL }} h</div>
                             </el-col>
                         </el-row>
 
@@ -288,8 +299,8 @@ onMounted(() => {
                 </el-col>
                 <el-col :span="6" :offset="4">
                     <el-card>
-                        <template #header>Morning to noon <span class="text-12px">({{ durationNoon }}h)({{ duration -
-        durationNoon }}h)</span></template>
+                        <template #header>Morning to noon <span class="text-12px">({{ validRestOfAM }}h)({{ duration -
+        validRestOfAM }}h)</span></template>
 
                         <el-row v-for="(value, key) in restsOfNoon">
                             <el-col :span="12">
