@@ -38,7 +38,7 @@ var duration = ref(0)
 var validRestOfAM = ref(0)
 // var durationAfternoon = ref(0)
 
-const ALL = computed(() => {return parseFloat(validRestOfAM.value as unknown as string) + parseFloat(validRestOfPM.value as unknown as string) })
+const ALL = computed(() => { return (validRestOfAM.value + validRestOfPM.value).toFixed(3) })
 
 
 function initData() {
@@ -76,8 +76,8 @@ function initData() {
     var allSeconds = ((H_Ended - H_Started) * 60 * 60) - (overedSeconds) + (M_Ended * 60)
     var allSecondsOfNoon = ((H_NoonEnded - H_Started) * 60 * 60) - (overedSeconds) + (M_NoonEnded * 60)
 
-    duration.value = (allSeconds / 60 / 60).toFixed(2) as unknown as number
-    validRestOfAM.value = (allSecondsOfNoon / 60 / 60).toFixed(2) as unknown as number
+    duration.value = (allSeconds / 60 / 60)
+    validRestOfAM.value = (allSecondsOfNoon / 60 / 60)
 
 
     var overedSecondsPM: number = 0
@@ -88,7 +88,7 @@ function initData() {
     var hoursPM = H_Ended - H_PMStarted
     var allSecondsPM = (hoursPM * 60 * 60) + (M_Ended * 60) - (overedSecondsPM as unknown as number)
 
-    validRestOfPM.value = (allSecondsPM / 60 / 60).toFixed(2) as unknown as number
+    validRestOfPM.value = (allSecondsPM / 60 / 60)
 }
 
 function initWorker() {
@@ -134,10 +134,11 @@ function checkScreenWidthAndRedirect() {
 }
 
 function calculateSalary() {
+    const sEveryDay = 200
     var H_Started = timeParams.value.H_Started
     var M_Started = timeParams.value.M_Started
     var H_Ended = timeParams.value.H_Ended
-    var M_Ended = timeParams.value.M_Endedf
+    var M_Ended = timeParams.value.M_Ended
     // var H_NoonEnded = timeParams.value.H_NoonEnded
     // var M_NoonEnded = timeParams.value.M_NoonEnded
 
@@ -147,19 +148,16 @@ function calculateSalary() {
     }
 
     var allSeconds = ((H_Ended - H_Started) * 60 * 60) - (overedSeconds) + (M_Ended * 60)
-    const sEveryDay = 200
-    var perSecond = (sEveryDay / allSeconds).toFixed(2)
-    var perMinutes = (sEveryDay / (allSeconds / 60)).toFixed(2)
-    var perHour = (sEveryDay / (allSeconds / 60 / 60)).toFixed(2)
 
-    console.log(
-        {
-            perSecond: perSecond,
-            perMinutes: perMinutes,
-            perHour: perHour,
-        }
-
-    )
+    var perSecond = (sEveryDay / allSeconds)
+    var perMinutes = (sEveryDay / (allSeconds / 60))
+    var perHour = (sEveryDay / (allSeconds / 60 / 60))
+    var all = {
+        perSecond: perSecond.toFixed(3),
+        perMinutes: perMinutes.toFixed(3),
+        perHour: perHour.toFixed(3),
+    }
+    console.log("salary", all)
 }
 
 onMounted(() => {
@@ -261,7 +259,7 @@ onMounted(() => {
                                 <div class="text-right">valid AM hours: </div>
                             </el-col>
                             <el-col :span="7">
-                                <div class="text-left ml-5px">{{ validRestOfAM }} h</div>
+                                <div class="text-left ml-5px">{{ validRestOfAM.toFixed(3) }} h</div>
                             </el-col>
                         </el-row>
 
@@ -270,7 +268,7 @@ onMounted(() => {
                                 <div class="text-right">valid PM hours: </div>
                             </el-col>
                             <el-col :span="7">
-                                <div class="text-left ml-5px">{{ validRestOfPM }} h</div>
+                                <div class="text-left ml-5px">{{ validRestOfPM.toFixed(3) }} h</div>
                             </el-col>
                         </el-row>
 
@@ -299,8 +297,8 @@ onMounted(() => {
                 </el-col>
                 <el-col :span="6" :offset="4">
                     <el-card>
-                        <template #header>Morning to noon <span class="text-12px">({{ validRestOfAM }}h)({{ duration -
-        validRestOfAM }}h)</span></template>
+                        <template #header>Morning to noon <span class="text-12px">({{ validRestOfAM }}h)({{ (duration -
+        validRestOfAM).toFixed(2) }}h)</span></template>
 
                         <el-row v-for="(value, key) in restsOfNoon">
                             <el-col :span="12">
