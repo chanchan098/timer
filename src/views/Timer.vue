@@ -297,8 +297,9 @@ onMounted(() => {
                 </el-col>
                 <el-col :span="6" :offset="4">
                     <el-card>
-                        <template #header>Morning to noon <span class="text-12px">({{ validRestOfAM }}h)({{ (duration -
-        validRestOfAM).toFixed(2) }}h)</span></template>
+                        <template #header>Morning to noon <span class="text-12px">({{ validRestOfAM.toFixed(2) }}h)({{
+                                (duration -
+                                validRestOfAM).toFixed(2) }}h)</span></template>
 
                         <el-row v-for="(value, key) in restsOfNoon">
                             <el-col :span="12">
